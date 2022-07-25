@@ -1,12 +1,26 @@
-from typing import List
 from unittest import TestCase
-from src.card import Position, Table, Card
 
-class TestTable(TestCase):
-    def setUp(self):
-        self.table = Table()
-        self.deck : List[Card] = [Card(5,5,5,5,'player_1'),Card(1,1,1,1, 'player_2')]
+from src.card import CardNumber
 
-    def test_put_card(self):
-        self.table.put_card(self.deck.pop(), Position(0,0))
-        self.assertIsNotNone(len(self.table.cells))
+
+class TestCardNumber(TestCase):
+    def test_card_number_gt(self):
+        a = CardNumber(7)
+        b = CardNumber("A")
+        self.assertFalse(a > b)
+
+    def test_card_number_lt(self):
+        a = CardNumber(1)
+        b = CardNumber(9)
+        self.assertTrue(a < b)
+
+    def test_card_number_eq_wrong(self):
+        a = CardNumber("A")
+        b = CardNumber(9)
+        c = a == b
+        self.assertFalse(a == b)
+
+    def test_card_number_eq_check(self):
+        a = CardNumber(9)
+        b = CardNumber(9)
+        self.assertTrue(a == b)
