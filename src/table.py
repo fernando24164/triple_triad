@@ -1,6 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import List, Optional
 
 from src.card import Card, Position
 
@@ -42,9 +42,9 @@ class Table:
 
     def _check_card_left(self, cell):
         if cell.position.x - 1 >= 0:
-            cell_on_left = self.cells[
+            cell_on_left = self.cells.get(
                 str(Position(cell.position.x - 1, cell.position.y))
-            ]
+            )
             if cell_on_left:
                 if cell.card.left_number > cell_on_left.card.right_number:
                     cell_on_left.owner_by_player = cell.card.played_by
@@ -90,3 +90,39 @@ class Table:
         self._check_card_right(cell)
         self._check_card_down(cell)
         self._check_card_up(cell)
+
+    def is_empty(self):
+        return len(self.cells) <= 0
+
+    def get_occupied_position(self) -> List[str]:
+        return self.cells.keys()
+
+    def get_empty_cells_surround(self, cell: Cell) -> List[Cell]:
+        empty_positions: List[Cell] = []
+        cell_position = cell.position
+        # check left
+        position_left = cell_position.x - 1
+        if 0 <= position_left <= self.x_max:
+            cell = self.cells.get(str(Position(position_left, cell_position.y)))
+            if not cell:
+                empty_positions.append(Position(position_left, cell_position.y))
+        # check right
+        position_right = cell_position.x + 1
+        if 0 <= position_right <= self.x_max:
+            cell = self.cells.get(str(Position(position_right, cell_position.y)))
+            if not cell:
+                empty_positions.append(Position(position_right, cell_position.y))
+        # check up
+        position_up = cell_position.y + 1
+        if 0 <= position_up <= self.y_max:
+            cell = self.cells.get(str(Position(cell_position.x, position_up)))
+            if not cell:
+                empty_positions.append(Position(cell_position.x, position_up))
+        # check down
+        position_down = cell_position.y - 1
+        if 0 <= position_down <= self.y_max:
+            cell = self.cells.get(str(Position(cell_position.x, position_down)))
+            if not cell:
+                empty_positions.append(Position(cell_position.x, position_down))
+
+        return empty_positions
